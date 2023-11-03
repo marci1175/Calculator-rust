@@ -10,7 +10,7 @@ enum Math {
     // ^
     Power,
 
-    //Empty
+    //Invalid
     KurvaAnyad,
 }
 
@@ -24,7 +24,6 @@ impl Default for Engine {
     fn default() -> Self {
         Self {
             buf: Vec::new(),
-
             num_list: Vec::new(),
             expr_list: Vec::new(),
         }
@@ -33,9 +32,6 @@ impl Default for Engine {
 
 impl Engine {
     fn invalid_equation(&self, err: Error, item_at_fault: String) {
-        dbg!(self.num_list.clone());
-        dbg!(self.expr_list.clone());
-
         println!(
             "[{err}]\n{}\n{}",
             format!(
