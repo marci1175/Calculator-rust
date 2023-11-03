@@ -39,7 +39,7 @@ impl Default for Engine {
 impl Engine {
     fn invalid_equation(&self, err: Error, item_at_fault: String) {
         println!(
-            "[{err}]\n{}\n{}",
+            "\n\n[{err}]\n{}\n{}",
             format!(
                 "Item(s) at fault => {} [at index : {}]",
                 item_at_fault,
@@ -55,7 +55,7 @@ impl Engine {
                 .map(|f| format!("{} ", f))
                 .collect::<String>()
         );
-        let _  = std::io::stdin();
+        let _ = std::io::stdin();
 
         Engine::mathmain(self.clone());
     }
@@ -68,10 +68,7 @@ impl Engine {
 
         std::io::stdin().read_line(&mut buf).unwrap();
 
-        self.buf = buf
-            .split_whitespace()
-            .map(|f| f.to_string())
-            .collect();
+        self.buf = buf.split_whitespace().map(|f| f.to_string()).collect();
         if !self.buf.is_empty() {
             self.mathdivider()
         } else {
@@ -89,7 +86,7 @@ impl Engine {
                     "-" => Math::Subtraction,
                     "*" => Math::Multiplication,
                     "/" | "%" | ":" => Math::Divide,
-                    "^" | "pow" => Math::Power,
+                    "^" | "pow" | "**" => Math::Power,
                     "cos" => Math::Cos,
                     "tan" => Math::Tan,
                     "sin" => Math::Sin,
@@ -149,11 +146,11 @@ impl Engine {
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
                 len -= 1; // Decrement the length since we removed an element
-                /*"Cos,
-                    Tan,
-                    Sin,
-                    Log,
-                    Rad," */
+                          /*"Cos,
+                          Tan,
+                          Sin,
+                          Log,
+                          Rad," */
             } else if self.expr_list[index] == Math::Cos {
                 let result = self.cos(self.num_list[index]);
                 self.expr_list.remove(index);
@@ -184,8 +181,7 @@ impl Engine {
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
                 len -= 1; // Decrement the length since we removed an element
-            }
-            else {
+            } else {
                 index += 1;
             }
         }
@@ -222,7 +218,7 @@ impl Engine {
 
         self.num_list[0]
     }
-    
+
     fn multiplication(&self, num1: f64, num2: f64) -> f64 {
         num1 * num2
     }
@@ -236,7 +232,7 @@ impl Engine {
         num1 - num2
     }
     fn power(&self, num1: f64, num2: f64) -> f64 {
-       num1.powf(num2)
+        num1.powf(num2)
     }
     fn fact(&self, num1: f64) -> f64 {
         if num1 == 0.0 || num1 == 1.0 {
@@ -264,8 +260,6 @@ impl Engine {
     fn rad(&self, num1: f64) -> f64 {
         num1.to_radians()
     }
-    
-    
 }
 
 fn main() {
