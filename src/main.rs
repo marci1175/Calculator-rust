@@ -35,6 +35,9 @@ impl Engine {
 
     fn invalid_equation(&self, err : Error, item_at_fault : String) {
 
+        dbg!(self.num_list.clone());
+        dbg!(self.expr_list.clone());
+
         println!("[{err}]\n{}\n{}", format!("Item(s) at fault => {} [at index : {}]", item_at_fault, *self.buf.iter().position(|element| *element == item_at_fault).get_or_insert(0) + 1 as usize), self.buf.iter().map(|f| format!("{} ", f)).collect::<String>());
         std::io::stdin();
 
@@ -46,6 +49,7 @@ impl Engine {
         self.num_list.clear();
 
         let mut buf = String::default();
+        
         std::io::stdin().read_line(&mut buf).unwrap();
 
         self.buf = buf.trim().split_whitespace().map(|f| f.to_string()).collect();
@@ -87,7 +91,7 @@ impl Engine {
     fn mathengine(&mut self) -> f64 {
         let mut len: usize = self.expr_list.len();
         let mut index = 0;
-
+        
         while index < len {
             if self.expr_list[index] == Math::Multiplication {
                 let result = self.multiplication(self.num_list[index], self.num_list[index + 1]);
@@ -111,7 +115,14 @@ impl Engine {
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
                 len -= 1; // Decrement the length since we removed an element
-            } else if self.expr_list[index] == Math::Addition {
+            }
+            else {
+                index += 1;
+            }
+        }
+        index = 0;
+        while index < len {
+            if self.expr_list[index] == Math::Addition {
                 let result = self.addition(self.num_list[index], self.num_list[index + 1]);
                 self.expr_list.remove(index);
                 self.num_list.remove(index);
@@ -129,6 +140,8 @@ impl Engine {
             else {
                 index += 1;
             }
+
+
         }
         
         if self.num_list.len() > 1 {
@@ -156,7 +169,8 @@ impl Engine {
 }
 
 fn main() {
+    println!("Use the calculator, with spaces in between each number / expression. (ie.: 30 + 30)\nStart typing :");
     loop {
-        println!("{}", Engine::mathmain(Engine::default()));
+        println!("Result : {}", Engine::mathmain(Engine::default()));
     }
 }
