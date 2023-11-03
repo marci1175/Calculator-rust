@@ -53,7 +53,7 @@ impl Engine {
                 .map(|f| format!("{} ", f))
                 .collect::<String>()
         );
-        std::io::stdin();
+        let _  = std::io::stdin();
 
         Engine::mathmain(self.clone());
     }
@@ -67,12 +67,11 @@ impl Engine {
         std::io::stdin().read_line(&mut buf).unwrap();
 
         self.buf = buf
-            .trim()
             .split_whitespace()
             .map(|f| f.to_string())
             .collect();
         if !self.buf.is_empty() {
-            return self.mathdivider();
+            self.mathdivider()
         } else {
             self.invalid_equation(Error::msg("Invalid equation (Empty equation)"), "-".into());
             0.0
@@ -175,19 +174,19 @@ impl Engine {
     }
 
     fn multiplication(&self, num1: f64, num2: f64) -> f64 {
-        return num1 * num2;
+        num1 * num2
     }
     fn divide(&self, num1: f64, num2: f64) -> f64 {
-        return num1 / num2;
+        num1 / num2
     }
     fn addition(&self, num1: f64, num2: f64) -> f64 {
-        return num1 + num2;
+        num1 + num2
     }
     fn subtraction(&self, num1: f64, num2: f64) -> f64 {
-        return num1 - num2;
+        num1 - num2
     }
     fn power(&self, num1: f64, num2: f64) -> f64 {
-        return num1.powf(num2);
+       num1.powf(num2)
     }
 }
 
