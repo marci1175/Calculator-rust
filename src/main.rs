@@ -9,6 +9,12 @@ enum Math {
     Subtraction,
     // ^
     Power,
+    Fact,
+    Cos,
+    Tan,
+    Sin,
+    Log,
+    Rad,
 
     //Invalid
     KurvaAnyad,
@@ -78,12 +84,18 @@ impl Engine {
         for item in self.buf.clone() {
             match Engine::mathdecide(&item) {
                 Ok(ok) => self.num_list.push(ok),
-                Err(_expr) => self.expr_list.push(match item.as_str() {
+                Err(_expr) => self.expr_list.push(match item.to_lowercase().as_str() {
                     "+" => Math::Addition,
                     "-" => Math::Subtraction,
                     "*" => Math::Multiplication,
                     "/" | "%" | ":" => Math::Divide,
                     "^" | "pow" => Math::Power,
+                    "cos" => Math::Cos,
+                    "tan" => Math::Tan,
+                    "sin" => Math::Sin,
+                    "rad" => Math::Rad,
+                    "log" => Math::Log,
+                    "!" => Math::Fact,
                     _ => {
                         /*Go apeshit*/
                         self.invalid_equation(
@@ -131,7 +143,49 @@ impl Engine {
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
                 len -= 1; // Decrement the length since we removed an element
-            } else {
+            } else if self.expr_list[index] == Math::Fact {
+                let result = self.fact(self.num_list[index]);
+                self.expr_list.remove(index);
+                self.num_list.remove(index);
+                self.num_list.insert(index, result);
+                len -= 1; // Decrement the length since we removed an element
+                /*"Cos,
+                    Tan,
+                    Sin,
+                    Log,
+                    Rad," */
+            } else if self.expr_list[index] == Math::Cos {
+                let result = self.cos(self.num_list[index]);
+                self.expr_list.remove(index);
+                self.num_list.remove(index);
+                self.num_list.insert(index, result);
+                len -= 1; // Decrement the length since we removed an element
+            } else if self.expr_list[index] == Math::Log {
+                let result = self.log(self.num_list[index], self.num_list[index + 1]);
+                self.expr_list.remove(index);
+                self.num_list.remove(index);
+                self.num_list.insert(index, result);
+                len -= 1; // Decrement the length since we removed an element
+            } else if self.expr_list[index] == Math::Tan {
+                let result = self.tan(self.num_list[index]);
+                self.expr_list.remove(index);
+                self.num_list.remove(index);
+                self.num_list.insert(index, result);
+                len -= 1; // Decrement the length since we removed an element
+            } else if self.expr_list[index] == Math::Sin {
+                let result = self.sin(self.num_list[index]);
+                self.expr_list.remove(index);
+                self.num_list.remove(index);
+                self.num_list.insert(index, result);
+                len -= 1; // Decrement the length since we removed an element
+            } else if self.expr_list[index] == Math::Rad {
+                let result = self.rad(self.num_list[index]);
+                self.expr_list.remove(index);
+                self.num_list.remove(index);
+                self.num_list.insert(index, result);
+                len -= 1; // Decrement the length since we removed an element
+            }
+            else {
                 index += 1;
             }
         }
@@ -168,7 +222,7 @@ impl Engine {
 
         self.num_list[0]
     }
-
+    
     fn multiplication(&self, num1: f64, num2: f64) -> f64 {
         num1 * num2
     }
@@ -184,6 +238,34 @@ impl Engine {
     fn power(&self, num1: f64, num2: f64) -> f64 {
        num1.powf(num2)
     }
+    fn fact(&self, num1: f64) -> f64 {
+        if num1 == 0.0 || num1 == 1.0 {
+            1.0
+        } else {
+            let mut result = 1.0;
+            for i in 2..=num1 as u64 {
+                result *= i as f64;
+            }
+            result
+        }
+    }
+    fn cos(&self, num1: f64) -> f64 {
+        num1.cos()
+    }
+    fn tan(&self, num1: f64) -> f64 {
+        num1.cos()
+    }
+    fn sin(&self, num1: f64) -> f64 {
+        num1.sin()
+    }
+    fn log(&self, num1: f64, num2: f64) -> f64 {
+        num1.log(num2)
+    }
+    fn rad(&self, num1: f64) -> f64 {
+        num1.to_radians()
+    }
+    
+    
 }
 
 fn main() {
