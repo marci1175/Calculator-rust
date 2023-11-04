@@ -15,14 +15,17 @@ enum Math {
     Sin,
     Log,
     Rad,
+    Ln,
+    CRoot,
+    SRoot,
 
     //Invalid
     KurvaAnyad,
 }
 
 #[derive(Clone)]
-struct Engine {
-    pub buf: Vec<String>,
+pub struct Engine {
+    buf: Vec<String>,
     num_list: Vec<f64>,
     expr_list: Vec<Math>,
 }
@@ -72,7 +75,7 @@ impl Engine {
         if !self.buf.is_empty() {
             self.mathdivider()
         } else {
-            self.invalid_equation(Error::msg("Invalid equation (Empty equation)"), "-".into());
+            self.invalid_equation(Error::msg("Invalid equation (Empty equation)"), " ".into());
             0.0
         }
     }
@@ -93,6 +96,9 @@ impl Engine {
                     "rad" => Math::Rad,
                     "log" => Math::Log,
                     "!" => Math::Fact,
+                    "ln" => Math::Ln,
+                    "croot" => Math::CRoot,
+                    "sroot" => Math::SRoot,
                     _ => {
                         /*Go apeshit*/
                         self.invalid_equation(
@@ -125,63 +131,77 @@ impl Engine {
                 self.num_list.remove(index);
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
-                len -= 1; // Decrement the length since we removed an element
+                len -= 1;
             } else if self.expr_list[index] == Math::Divide {
                 let result = self.divide(self.num_list[index], self.num_list[index + 1]);
                 self.expr_list.remove(index);
                 self.num_list.remove(index);
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
-                len -= 1; // Decrement the length since we removed an element
+                len -= 1;
             } else if self.expr_list[index] == Math::Power {
                 let result = self.power(self.num_list[index], self.num_list[index + 1]);
                 self.expr_list.remove(index);
                 self.num_list.remove(index);
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
-                len -= 1; // Decrement the length since we removed an element
+                len -= 1;
             } else if self.expr_list[index] == Math::Fact {
                 let result = self.fact(self.num_list[index]);
                 self.expr_list.remove(index);
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
-                len -= 1; // Decrement the length since we removed an element
-                          /*"Cos,
-                          Tan,
-                          Sin,
-                          Log,
-                          Rad," */
+                len -= 1;
             } else if self.expr_list[index] == Math::Cos {
                 let result = self.cos(self.num_list[index]);
                 self.expr_list.remove(index);
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
-                len -= 1; // Decrement the length since we removed an element
+                len -= 1;
             } else if self.expr_list[index] == Math::Log {
                 let result = self.log(self.num_list[index], self.num_list[index + 1]);
                 self.expr_list.remove(index);
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
-                len -= 1; // Decrement the length since we removed an element
+                len -= 1;
             } else if self.expr_list[index] == Math::Tan {
                 let result = self.tan(self.num_list[index]);
                 self.expr_list.remove(index);
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
-                len -= 1; // Decrement the length since we removed an element
+                len -= 1;
             } else if self.expr_list[index] == Math::Sin {
                 let result = self.sin(self.num_list[index]);
                 self.expr_list.remove(index);
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
-                len -= 1; // Decrement the length since we removed an element
+                len -= 1;
             } else if self.expr_list[index] == Math::Rad {
                 let result = self.rad(self.num_list[index]);
                 self.expr_list.remove(index);
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
-                len -= 1; // Decrement the length since we removed an element
-            } else {
+                len -= 1;
+            } else if self.expr_list[index] == Math::CRoot {
+                let result = self.croot(self.num_list[index]);
+                self.expr_list.remove(index);
+                self.num_list.remove(index);
+                self.num_list.insert(index, result);
+                len -= 1;
+            } else if self.expr_list[index] == Math::Ln {
+                let result = self.ln(self.num_list[index]);
+                self.expr_list.remove(index);
+                self.num_list.remove(index);
+                self.num_list.insert(index, result);
+                len -= 1;
+            } else if self.expr_list[index] == Math::SRoot {
+                let result = self.sroot(self.num_list[index]);
+                self.expr_list.remove(index);
+                self.num_list.remove(index);
+                self.num_list.insert(index, result);
+                len -= 1;
+            } 
+            else {
                 index += 1;
             }
         }
@@ -193,14 +213,14 @@ impl Engine {
                 self.num_list.remove(index);
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
-                len -= 1; // Decrement the length since we removed an element
+                len -= 1;
             } else if self.expr_list[index] == Math::Subtraction {
                 let result = self.subtraction(self.num_list[index], self.num_list[index + 1]);
                 self.expr_list.remove(index);
                 self.num_list.remove(index);
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
-                len -= 1; // Decrement the length since we removed an element
+                len -= 1;
             } else {
                 index += 1;
             }
@@ -259,6 +279,15 @@ impl Engine {
     }
     fn rad(&self, num1: f64) -> f64 {
         num1.to_radians()
+    }
+    fn ln(&self, num1: f64) -> f64 {
+        num1.ln()
+    }
+    fn croot(&self, num1: f64) -> f64 {
+        num1.cbrt().abs()
+    }
+    fn sroot(&self, num1: f64) -> f64 {
+        num1.sqrt().abs()
     }
 }
 
