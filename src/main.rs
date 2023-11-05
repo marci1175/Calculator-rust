@@ -111,7 +111,11 @@ impl Engine {
             }
         }
         //finsihed sorting the 2 vectors
-        self.mathengine()
+        if self.num_list.is_empty() {
+            self.invalid_equation(Error::msg("Syntax Error (Empty expression)"), "~".into());
+        }
+        
+        return self.mathengine()
     }
 
     fn mathdecide(token: &str) -> anyhow::Result<f64> {
