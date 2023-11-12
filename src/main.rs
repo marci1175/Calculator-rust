@@ -23,6 +23,9 @@ enum Math {
     //last answ
     Answ,
 
+    //pi
+    Pi,
+
     //Invalid
     KurvaAnyad,
 }
@@ -107,6 +110,7 @@ impl Engine {
                     "croot" => Math::CRoot,
                     "sroot" => Math::SRoot,
                     "ans" | "answ" => Math::Answ,
+                    "pi" => Math::Pi,
                     _ => {
                         /*Go apeshit*/
                         self.invalid_equation(
@@ -120,7 +124,7 @@ impl Engine {
         }
 
         //finsihed sorting the 2 vectors
-        if !self.num_list.is_empty() || self.expr_list[0] == Math::Answ && self.expr_list.len() == 1 {
+        if !self.num_list.is_empty() || (self.expr_list[0] == Math::Answ || self.expr_list[0] == Math::Pi) && self.expr_list.len() == 1 {
             return self.mathengine();
         }
         else {
@@ -151,6 +155,10 @@ impl Engine {
             } else if self.expr_list[index] == Math::Answ {
                 self.expr_list.remove(index);
                 self.num_list.insert(index, self.answ());
+                len -= 1;
+            } else if self.expr_list[index] == Math::Pi {
+                self.expr_list.remove(index);
+                self.num_list.insert(index, self.pi());
                 len -= 1;
             }
             else if self.expr_list[index] == Math::Divide {
@@ -257,7 +265,6 @@ impl Engine {
             );
         }
         self.last_answ = self.num_list[0];
-        dbg!(self.last_answ);
         self.num_list[0]
     }
 
@@ -313,6 +320,9 @@ impl Engine {
     }
     fn answ(&self) -> f64 {
         self.last_answ
+    }
+    fn pi(&self) -> f64 {
+        std::f64::consts::PI
     }
 }
 
