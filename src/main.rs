@@ -19,6 +19,10 @@ enum Math {
     CRoot,
     SRoot,
 
+
+    //last answ
+    Answ,
+
     //Invalid
     KurvaAnyad,
 }
@@ -28,6 +32,7 @@ pub struct Engine {
     buf: Vec<String>,
     num_list: Vec<f64>,
     expr_list: Vec<Math>,
+    last_answ: f64,
 }
 impl Default for Engine {
     fn default() -> Self {
@@ -35,6 +40,7 @@ impl Default for Engine {
             buf: Vec::new(),
             num_list: Vec::new(),
             expr_list: Vec::new(),
+            last_answ: 0.,
         }
     }
 }
@@ -73,14 +79,15 @@ impl Engine {
 
         self.buf = buf.split_whitespace().map(|f| f.to_string()).collect();
         if !self.buf.is_empty() {
-            self.mathdivider()
+            self.last_answ = self.mathdivider();
+            return self.last_answ;
         } else {
             self.invalid_equation(Error::msg("Invalid equation (Empty equation)"), " ".into());
             0.0
         }
     }
 
-    fn mathdivider(mut self) -> f64 {
+    fn mathdivider(&mut self) -> f64 {
         for item in self.buf.clone() {
             match Engine::mathdecide(&item) {
                 Ok(ok) => self.num_list.push(ok),
@@ -99,6 +106,7 @@ impl Engine {
                     "ln" => Math::Ln,
                     "croot" => Math::CRoot,
                     "sroot" => Math::SRoot,
+                    "ans" | "answ" => Math::Answ,
                     _ => {
                         /*Go apeshit*/
                         self.invalid_equation(
@@ -110,12 +118,16 @@ impl Engine {
                 }),
             }
         }
+
         //finsihed sorting the 2 vectors
-        if self.num_list.is_empty() {
-            self.invalid_equation(Error::msg("Syntax Error (Empty expression)"), "~".into());
+        if !self.num_list.is_empty() || self.expr_list[0] == Math::Answ && self.expr_list.len() == 1 {
+            return self.mathengine();
         }
-        
-        return self.mathengine()
+        else {
+            self.invalid_equation(Error::msg("Syntax Error (Empty expression)"), "~".into());
+            0.0
+        }
+
     }
 
     fn mathdecide(token: &str) -> anyhow::Result<f64> {
@@ -136,7 +148,12 @@ impl Engine {
                 self.num_list.remove(index);
                 self.num_list.insert(index, result);
                 len -= 1;
-            } else if self.expr_list[index] == Math::Divide {
+            } else if self.expr_list[index] == Math::Answ {
+                self.expr_list.remove(index);
+                self.num_list.insert(index, self.answ());
+                len -= 1;
+            }
+            else if self.expr_list[index] == Math::Divide {
                 let result = self.divide(self.num_list[index], self.num_list[index + 1]);
                 self.expr_list.remove(index);
                 self.num_list.remove(index);
@@ -239,7 +256,8 @@ impl Engine {
                     .collect(),
             );
         }
-
+        self.last_answ = self.num_list[0];
+        dbg!(self.last_answ);
         self.num_list[0]
     }
 
@@ -292,6 +310,9 @@ impl Engine {
     }
     fn sroot(&self, num1: f64) -> f64 {
         num1.sqrt().abs()
+    }
+    fn answ(&self) -> f64 {
+        self.last_answ
     }
 }
 
